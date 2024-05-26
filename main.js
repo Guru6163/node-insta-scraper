@@ -97,7 +97,7 @@ app.get('/scrape-instagram', async (req, res) => {
     try {
         const [xFbLsdValue, CSRFToken, userId] = await scrapeInstagramProfile();
         const posts = await scrapeInstagramPosts(userId, xFbLsdValue, CSRFToken);
-        res.json(posts.data.xdt_api__v1__feed__user_timeline_graphql_connection.edges);
+        res.json(posts);
     } catch (error) {
         console.error('Error scraping Instagram profile:', error);
         res.status(500).json({ error: 'Failed to scrape Instagram profile', details: error.message });
