@@ -1,6 +1,9 @@
 import express from 'express';
 import puppeteer from 'puppeteer';
 import fetch from 'node-fetch';
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 const app = express();
 const PORT = 3000;
@@ -9,7 +12,18 @@ const PORT = 3000;
 // Function to scrape Instagram profile
 async function scrapeInstagramProfile() {
     try {
-        let browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({
+            args: [
+                "--disable-setuid-sandbox",
+                "--no-sandbox",
+                "--single-process",
+                "--no-zygote",
+            ],
+            executablePath:
+                process.env.NODE_ENV === "production"
+                    ? process.env.PUPPETEER_EXECUTABLE_PATH
+                    : puppeteer.executablePath(),
+        });
         const page = await browser.newPage();
 
         await page.setRequestInterception(true);
@@ -88,7 +102,7 @@ async function scrapeInstagramPosts(userId, lsd, csrfToken) {
     return data;
 }
 
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
     res.send("Puppeteer is Working Fine Bro...")
 })
 
